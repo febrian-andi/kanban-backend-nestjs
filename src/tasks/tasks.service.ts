@@ -25,7 +25,13 @@ export class TasksService {
   }
 
   findAll() {
-    return this.tasks.filter((task) => !task.isDeleted);
+    const tasks = this.tasks.filter((task) => !task.isDeleted);
+
+    if (!tasks) {
+      throw new NotFoundException(`Tasks not found`);
+    }
+
+    return tasks
   }
 
   findOne(id: number): Task {

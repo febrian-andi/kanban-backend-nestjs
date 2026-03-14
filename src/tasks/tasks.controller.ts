@@ -15,7 +15,7 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Controller('tasks')
 export class TasksController {
-  constructor(private readonly tasksService: TasksService) {}
+  constructor(private readonly tasksService: TasksService) { }
 
   @Version('1')
   @Post()
@@ -31,12 +31,14 @@ export class TasksController {
   @Get()
   findAll() {
     const tasks = this.tasksService.findAll();
-    if (tasks.length === 0) {
+
+    if (tasks.length < 1) {
       return {
-        message: 'No tasks found',
-        tasks: [],
+        message: 'Tasks is empty',
+        tasks: tasks,
       };
     }
+
     return {
       message: 'Tasks retrieved successfully',
       tasks: tasks,
