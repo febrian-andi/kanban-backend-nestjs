@@ -1,0 +1,33 @@
+### Variables
+@baseUrl = http://localhost:3000/v1
+@taskId = 1774060728865
+
+### 1. Create a new Task
+POST {{baseUrl}}/tasks
+Content-Type: application/json
+
+{
+  "title": "",
+  "description": "Mempelajari dasar-dasar API dengan NestJS"
+}
+
+### 2. Get All Tasks
+GET {{baseUrl}}/tasks
+Accept: application/json
+
+### 3. Get Task by ID
+GET {{baseUrl}}/tasks/{{taskId}}
+Accept: application/json
+
+### 4. Update Task by ID
+PATCH {{baseUrl}}/tasks/{{taskId}}
+Content-Type: application/json
+
+{
+  "title": "Belajar NestJS Lanjutan",
+  "status": "ON_PROGRESS"
+}
+
+### 5. Delete Task by ID
+DELETE {{baseUrl}}/tasks/{{taskId}}
+Accept: application/json
