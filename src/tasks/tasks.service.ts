@@ -31,7 +31,7 @@ export class TasksService {
       throw new NotFoundException(`Tasks not found`);
     }
 
-    return tasks
+    return tasks;
   }
 
   findOne(id: number): Task {
