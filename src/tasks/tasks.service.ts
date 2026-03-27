@@ -28,41 +28,46 @@ export class TasksService {
     const tasks = this.tasks.filter((task) => !task.isDeleted);
 
     if (!tasks) {
-      throw new NotFoundException(`Tasks not found`);
+      throw new NotFoundException();
     }
 
     return tasks;
   }
 
-  findOne(id: number): Task {
+  findOne(id: number): Task | null {
     const task = this.tasks.find((task) => task.id === id && !task.isDeleted);
 
     if (!task) {
-      throw new NotFoundException(`Task with ID ${id} not found`);
+      throw new NotFoundException();
     }
-
     return task;
   }
 
   update(id: number, updateTaskDto: UpdateTaskDto) {
-    const task: Task = this.findOne(id);
+    const task = this.findOne(id);
 
-    if (updateTaskDto.status) {
-      task.status = updateTaskDto.status;
+    if (task) {
+      if (updateTaskDto.status) {
+        task.status = updateTaskDto.status;
+      }
+      if (updateTaskDto.title) {
+        task.title = updateTaskDto.title;
+      }
+      if (updateTaskDto.description) {
+        task.description = updateTaskDto.description;
+      }
+      task.updatedAt = new Date();
+      return task;
     }
-    if (updateTaskDto.title) {
-      task.title = updateTaskDto.title;
-    }
-    if (updateTaskDto.description) {
-      task.description = updateTaskDto.description;
-    }
-    task.updatedAt = new Date();
-    return task;
+    return null;
   }
 
   remove(id: number) {
     const task = this.findOne(id);
-    task.isDeleted = true;
-    return task;
+    if (task) {
+      task.isDeleted = true;
+      return task;
+    }
+    return null;
   }
 }
