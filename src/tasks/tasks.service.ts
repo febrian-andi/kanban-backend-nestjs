@@ -1,73 +1,30 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './entities/task.entity';
+import { TasksRepository } from './tasks.repository';
 
 @Injectable()
 export class TasksService {
-  private tasks: Task[] = [
-    {
-      id: 1,
-      title: 'Task 1',
-      description: 'Description for Task 1',
-      status: 'TODO',
-      createdBy: 1,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      isDeleted: false,
-    },
-  ];
+  constructor(private readonly tasksRepository: TasksRepository) {}
 
-  create(createTaskDto: CreateTaskDto) {
-    const newTask = new Task(createTaskDto.title, createTaskDto.description, 1);
-    this.tasks.push(newTask);
-    return newTask;
+  async create(createTaskDto: CreateTaskDto): Promise<Task> {
+    return await this.tasksRepository.createTask(createTaskDto);
   }
 
-  findAll() {
-    const tasks = this.tasks.filter((task) => !task.isDeleted);
-
-    if (!tasks) {
-      throw new NotFoundException();
-    }
-
-    return tasks;
+  async findAll(): Promise<Task[]> {
+    return await this.tasksRepository.getTasks();
   }
 
-  findOne(id: number): Task | null {
-    const task = this.tasks.find((task) => task.id === id && !task.isDeleted);
-
-    if (!task) {
-      throw new NotFoundException();
-    }
-    return task;
+  async findOne(id: number): Promise<Task> {
+    return await this.tasksRepository.getTaskById(id);
   }
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    const task = this.findOne(id);
-
-    if (task) {
-      if (updateTaskDto.status) {
-        task.status = updateTaskDto.status;
-      }
-      if (updateTaskDto.title) {
-        task.title = updateTaskDto.title;
-      }
-      if (updateTaskDto.description) {
-        task.description = updateTaskDto.description;
-      }
-      task.updatedAt = new Date();
-      return task;
-    }
-    return null;
+  async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task | null> {
+    return await this.tasksRepository.updateTask(id, updateTaskDto);
   }
 
-  remove(id: number) {
-    const task = this.findOne(id);
-    if (task) {
-      task.isDeleted = true;
-      return task;
-    }
-    return null;
+  async remove(id: number): Promise<Task | null> {
+    return await this.tasksRepository.deleteTask(id);
   }
 }

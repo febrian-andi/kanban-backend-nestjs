@@ -19,8 +19,8 @@ export class TasksController {
 
   @Version('1')
   @Post()
-  create(@Body() createTaskDto: CreateTaskDto) {
-    const newTask = this.tasksService.create(createTaskDto);
+  async create(@Body() createTaskDto: CreateTaskDto) {
+    const newTask = await this.tasksService.create(createTaskDto);
     return newTask;
   }
 
@@ -29,7 +29,7 @@ export class TasksController {
   async findAll() {
     await new Promise((resolve) => setTimeout(resolve, 4000));
 
-    const tasks = this.tasksService.findAll();
+    const tasks = await this.tasksService.findAll();
 
     if (tasks.length < 1) {
       return tasks;
@@ -40,22 +40,22 @@ export class TasksController {
 
   @Version('1')
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    const task = this.tasksService.findOne(id);
+  async findOne(@Param('id') id: number) {
+    const task = await this.tasksService.findOne(id);
     return task;
   }
 
   @Version('1')
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateTaskDto: UpdateTaskDto) {
-    const task = this.tasksService.update(id, updateTaskDto);
+  async update(@Param('id') id: number, @Body() updateTaskDto: UpdateTaskDto) {
+    const task = await this.tasksService.update(id, updateTaskDto);
     return task;
   }
 
   @Version('1')
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    const task = this.tasksService.remove(id);
+  async remove(@Param('id') id: number) {
+    const task = await this.tasksService.remove(id);
     return task;
   }
 }
