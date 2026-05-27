@@ -1,0 +1,10 @@
+{
+  "rest-client.environmentVariables": {
+    "dev": {
+      "baseUrl": "http://localhost:3000/v1"
+    },
+    "prod": {
+      "baseUrl": "https://api.example.com/v1"
+    }
+  }
+}

@@ -8,7 +8,8 @@ export const TASK_STATUSES = [
 ] as const;
 
 export type TaskStatus = (typeof TASK_STATUSES)[number];
-@Entity()
+
+@Entity('tasks')
 export class Task {
   @PrimaryGeneratedColumn()
   id: number;

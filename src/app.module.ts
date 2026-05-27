@@ -6,6 +6,7 @@ import { TasksModule } from './tasks/tasks.module';
 import { CoreModule } from './core/core.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Task } from './tasks/entities/task.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -25,9 +26,10 @@ import { Task } from './tasks/entities/task.entity';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
         entities: [Task],
-        synchronize: true, //only dev
+        synchronize: configService.get<string>('IS_PRODUCTION') !== 'true', //only dev
       }),
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

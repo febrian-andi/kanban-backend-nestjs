@@ -6,5 +6,5 @@ import { IsIn } from 'class-validator';
 
 export class UpdateTaskDto extends PartialType(CreateTaskDto) {
   @IsIn(TASK_STATUSES)
-  status: TaskStatus;
+  status?: TaskStatus;
 }

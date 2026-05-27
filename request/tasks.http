@@ -1,13 +1,12 @@
 ### Variables
-@baseUrl = http://localhost:3000/v1
-@taskId = 1774060728865
+@taskId = 1
 
 ### 1. Create a new Task
 POST {{baseUrl}}/tasks
 Content-Type: application/json
 
 {
-  "title": "",
+  "title": "Belajar Backend",
   "description": "Mempelajari dasar-dasar API dengan NestJS"
 }
 

@@ -8,10 +8,21 @@ describe('TasksController', () => {
   let controller: TasksController;
   let service: TasksService;
 
+  const mockTasksService = {
+    findAll: jest.fn(),
+    findOne: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    remove: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TasksController],
-      providers: [TasksService],
+      providers: [
+        TasksService,
+        { provide: TasksService, useValue: mockTasksService },
+      ],
     }).compile();
 
     controller = module.get<TasksController>(TasksController);
@@ -27,39 +38,68 @@ describe('TasksController', () => {
   });
 
   it('find all should return empty tasks', async () => {
-    jest.spyOn(service, 'findAll').mockImplementation(() => [] as Task[]);
+    jest
+      .spyOn(service, 'findAll')
+      .mockImplementation(() => Promise.resolve([] as Task[]));
 
     expect(await controller.findAll()).toEqual([]);
   });
 
   it('find all should return all tasks', async () => {
     const tasks: Task[] = [
-      new Task('Task 1', 'Description 1', 1),
-      new Task('Task 2', 'Description 2', 1),
+      {
+        id: 1,
+        title: 'Task 1',
+        description: 'Description 1',
+        status: 'TODO',
+        createdBy: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        isDeleted: false,
+      },
+      {
+        id: 2,
+        title: 'Task 2',
+        description: 'Description 2',
+        status: 'TODO',
+        createdBy: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        isDeleted: false,
+      },
     ];
 
-    jest.spyOn(service, 'findAll').mockImplementation(() => tasks);
+    jest
+      .spyOn(service, 'findAll')
+      .mockImplementation(() => Promise.resolve(tasks));
 
     expect(await controller.findAll()).toEqual(tasks);
   });
 
-  it('find one should be return task', () => {
-    const task: Task = new Task('Task 1', 'Description 1', 1);
+  it('find one should be return task', async () => {
+    const task: Task = {
+      id: 1,
+      title: 'Task 1',
+      description: 'Description 1',
+      status: 'TODO',
+      createdBy: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      isDeleted: false,
+    };
 
     jest.spyOn(service, 'findOne').mockImplementation((id: number) => {
       expect(id).toEqual(task.id);
-      return task;
+      return Promise.resolve(task);
     });
 
-    const actual = controller.findOne(task.id);
+    const actual = await controller.findOne(task.id);
     expect(actual).toBe(task);
   });
 
-  it('find one should throw NotFoundException', () => {
-    jest.spyOn(service, 'findOne').mockImplementation(() => {
-      throw new NotFoundException();
-    });
+  it('find one should throw NotFoundException', async () => {
+    jest.spyOn(service, 'findOne').mockRejectedValue(new NotFoundException());
 
-    expect(() => controller.findOne(10)).toThrow(NotFoundException);
+    await expect(controller.findOne(10)).rejects.toThrow(NotFoundException);
   });
 });
