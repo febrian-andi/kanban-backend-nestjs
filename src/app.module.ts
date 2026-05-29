@@ -6,7 +6,8 @@ import { TasksModule } from './tasks/tasks.module';
 import { CoreModule } from './core/core.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Task } from './tasks/entities/task.entity';
-import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     TasksModule,
     CoreModule,
+    UsersModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -25,11 +27,10 @@ import { AuthModule } from './auth/auth.module';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [Task],
+        entities: [Task, User],
         synchronize: configService.get<string>('IS_PRODUCTION') !== 'true', //only dev
       }),
     }),
-    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -4,6 +4,7 @@
 ### 1. Create a new Task
 POST {{baseUrl}}/tasks
 Content-Type: application/json
+Accept: application/json
 
 {
   "title": "Belajar Backend",
@@ -12,15 +13,18 @@ Content-Type: application/json
 
 ### 2. Get All Tasks
 GET {{baseUrl}}/tasks
+Content-Type: application/json
 Accept: application/json
 
 ### 3. Get Task by ID
 GET {{baseUrl}}/tasks/{{taskId}}
+Content-Type: application/json
 Accept: application/json
 
 ### 4. Update Task by ID
 PATCH {{baseUrl}}/tasks/{{taskId}}
 Content-Type: application/json
+Accept: application/json
 
 {
   "title": "Belajar NestJS Lanjutan",
@@ -29,4 +33,5 @@ Content-Type: application/json
 
 ### 5. Delete Task by ID
 DELETE {{baseUrl}}/tasks/{{taskId}}
+Content-Type: application/json
 Accept: application/json

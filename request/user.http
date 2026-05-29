@@ -1,0 +1,14 @@
+### Variables
+@rand = {{ $randomInt 1 10000}}
+@password = Password123
+
+### 1. Register New User
+POST {{baseUrl}}/users/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "user-{{rand}}",
+  "email": "user-{{rand}}@example.com",
+  "password": "{{password}}"
+} 
