@@ -6,5 +6,5 @@
     "prod": {
       "baseUrl": "https://api.example.com/v1"
     }
-  }
+  },
 }

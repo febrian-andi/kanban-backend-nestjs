@@ -1,10 +1,13 @@
 ### Variables
-@taskId = 1
+@taskId = 12
+# @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RJZCI6IjE2N2ZmY2I3LWQwOTktNDFiZC04NDY0LTc0NDQ3Yzk1MjEwNSIsInVzZXJJZCI6MTAsIm5hbWUiOiJ1c2VyLTE2NDAiLCJlbWFpbCI6InVzZXItMTY0MEBleGFtcGxlLmNvbSIsImlhdCI6MTc4MDA2ODUzMSwiZXhwIjoxNzgwMTExNzMxLCJhdWQiOiJrYW5iYW4tYmUiLCJpc3MiOiJrYW5iYW4tYmUifQ.PJONudnWBF8qN4VpH2_1ZpKl-mKMUrL3-GSv6HdBedU
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RJZCI6IjkyZmE5MzJhLTgzMWUtNDlmZS1hOTgxLTBhNzVkZDE2MGRhOSIsInVzZXJJZCI6MTQsIm5hbWUiOiJ1c2VyLTQ3MzgiLCJlbWFpbCI6InVzZXItNDczOEBleGFtcGxlLmNvbSIsImlhdCI6MTc4MDA2ODYzMiwiZXhwIjoxNzgwMTExODMyLCJhdWQiOiJrYW5iYW4tYmUiLCJpc3MiOiJrYW5iYW4tYmUifQ.ilDf3_yRs6X1-Kz-I9seWY5iryTo59RoeYeeogfbsRE
 
 ### 1. Create a new Task
 POST {{baseUrl}}/tasks
 Content-Type: application/json
 Accept: application/json
+Authorization: Bearer {{token}}
 
 {
   "title": "Belajar Backend",
@@ -15,16 +18,19 @@ Accept: application/json
 GET {{baseUrl}}/tasks
 Content-Type: application/json
 Accept: application/json
+Authorization: Bearer {{token}}
 
 ### 3. Get Task by ID
 GET {{baseUrl}}/tasks/{{taskId}}
 Content-Type: application/json
 Accept: application/json
+Authorization: Bearer {{token}}
 
 ### 4. Update Task by ID
 PATCH {{baseUrl}}/tasks/{{taskId}}
 Content-Type: application/json
 Accept: application/json
+Authorization: Bearer {{token}}
 
 {
   "title": "Belajar NestJS Lanjutan",
@@ -35,3 +41,4 @@ Accept: application/json
 DELETE {{baseUrl}}/tasks/{{taskId}}
 Content-Type: application/json
 Accept: application/json
+Authorization: Bearer {{token}}

@@ -11,4 +11,14 @@ Accept: application/json
   "name": "user-{{rand}}",
   "email": "user-{{rand}}@example.com",
   "password": "{{password}}"
-} 
+}
+
+### 2. Login User
+POST {{baseUrl}}/users/login 
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "user-4738@example.com",
+  "password": "{{password}}"
+}

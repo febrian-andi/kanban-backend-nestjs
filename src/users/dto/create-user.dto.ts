@@ -11,9 +11,4 @@ export class CreateUserDto {
   @IsNotEmpty()
   @Length(8, 50)
   password: string;
-
-  constructor(name: string, email: string) {
-    this.name = name;
-    this.email = email;
-  }
 }

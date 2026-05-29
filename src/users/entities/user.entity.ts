@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
+import { Task } from 'src/tasks/entities/task.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -11,7 +13,8 @@ export class User {
   @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
   email: string;
 
-  @Column({ type: 'char', length: 255, nullable: false })
+  @Column({ type: 'varchar', length: 255, nullable: false })
+  @Exclude()
   password: string;
 
   @Column({
@@ -26,4 +29,7 @@ export class User {
 
   @Column({ type: 'boolean', default: false })
   isDeleted: boolean;
+
+  @OneToMany(() => Task, (task) => task.createdBy)
+  tasks: Task[];
 }

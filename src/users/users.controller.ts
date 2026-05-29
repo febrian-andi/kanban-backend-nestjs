@@ -6,10 +6,15 @@ import {
   // Patch,
   Param,
   Version,
+  HttpCode,
+  HttpStatus,
   // Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { LoginDto } from './dto/login.dto';
+import { TokenDto } from 'src/auth/dto/token.dto';
+import { SkipAuthGuard } from 'src/core/decorators/skip-auth.decorator';
 // import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
@@ -17,9 +22,18 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Version('1')
+  @SkipAuthGuard()
   @Post('/register')
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
+  }
+
+  @Version('1')
+  @SkipAuthGuard()
+  @Post('/login')
+  @HttpCode(HttpStatus.OK)
+  login(@Body() loginDto: LoginDto): Promise<TokenDto> {
+    return this.usersService.login(loginDto);
   }
 
   @Version('1')
@@ -27,14 +41,4 @@ export class UsersController {
   findOne(@Param('id') id: number) {
     return this.usersService.findOne(id);
   }
-
-  // @Patch(':id')
-  // update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.usersService.update(+id, updateUserDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.usersService.remove(+id);
-  // }
 }

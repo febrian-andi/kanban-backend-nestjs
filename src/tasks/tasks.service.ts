@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './entities/task.entity';
@@ -8,23 +12,54 @@ import { TasksRepository } from './tasks.repository';
 export class TasksService {
   constructor(private readonly tasksRepository: TasksRepository) {}
 
-  async create(createTaskDto: CreateTaskDto): Promise<Task> {
-    return await this.tasksRepository.createTask(createTaskDto);
+  async create(createTaskDto: CreateTaskDto, userId: number): Promise<Task> {
+    return await this.tasksRepository.createTask(createTaskDto, userId);
   }
 
-  async findAll(): Promise<Task[]> {
-    return await this.tasksRepository.getTasks();
+  async findAll(userId: number): Promise<Task[]> {
+    return await this.tasksRepository.getTasks(userId);
   }
 
-  async findOne(id: number): Promise<Task> {
-    return await this.tasksRepository.getTaskById(id);
+  async findOne(userId: number, id: number): Promise<Task> {
+    const task = await this.tasksRepository.getTaskById(id);
+
+    if (!task) {
+      throw new NotFoundException(`Task with ID "${id}" not found`);
+    }
+
+    if (task.createdBy.id !== userId) {
+      throw new ForbiddenException(
+        `You do not have permission to access this task`,
+      );
+    }
+
+    return task;
   }
 
-  async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task | null> {
-    return await this.tasksRepository.updateTask(id, updateTaskDto);
+  async update(
+    userId: number,
+    id: number,
+    updateTaskDto: UpdateTaskDto,
+  ): Promise<Task> {
+    const task = await this.findOne(userId, id);
+
+    if (updateTaskDto.status) {
+      task.status = updateTaskDto.status;
+    }
+    if (updateTaskDto.title) {
+      task.title = updateTaskDto.title;
+    }
+    if (updateTaskDto.description) {
+      task.description = updateTaskDto.description;
+    }
+    task.updatedAt = new Date();
+
+    return await this.tasksRepository.saveTask(task);
   }
 
-  async remove(id: number): Promise<Task | null> {
-    return await this.tasksRepository.deleteTask(id);
+  async remove(userId: number, id: number): Promise<Task> {
+    const task = await this.findOne(userId, id);
+    task.isDeleted = true;
+    return await this.tasksRepository.saveTask(task);
   }
 }
