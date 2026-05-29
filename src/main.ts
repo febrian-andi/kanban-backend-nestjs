@@ -6,10 +6,12 @@ import {
   ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { AppConfig } from './config/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+  const appConfig = configService.getOrThrow<AppConfig>('app');
 
   app.enableVersioning({
     type: VersioningType.URI,
@@ -20,12 +22,10 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-      disableErrorMessages:
-        configService.get<string>('IS_PRODUCTION') === 'true', //for production
+      disableErrorMessages: appConfig.env === 'production',
     }),
   );
 
-  const port = configService.get<number>('APP_PORT') ?? 3000;
-  await app.listen(port);
+  await app.listen(appConfig.port);
 }
-bootstrap();
+void bootstrap();

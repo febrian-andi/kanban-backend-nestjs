@@ -1,18 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { User } from 'src/users/entities/user.entity';
 import { TokenDto } from './dto/token.dto';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtVerifyOptions } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import { UserLoggedDto } from 'src/users/dto/user-logged.dto';
 import { ConfigService } from '@nestjs/config';
 import { JwtPayloadDto } from './dto/jwt-payload.dto';
+import { JwtConfig } from 'src/config/config';
 
 @Injectable()
 export class AuthService {
+  private jwtVerifyOptions: JwtVerifyOptions;
+
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-  ) {}
+  ) {
+    const jwtConfig = this.configService.getOrThrow<JwtConfig>('jwt');
+
+    this.jwtVerifyOptions = {
+      secret: jwtConfig.secret,
+      algorithms: [jwtConfig.algorithm],
+      audience: jwtConfig.audience,
+      issuer: jwtConfig.issuer,
+    };
+  }
 
   async generateToken(user: User): Promise<TokenDto> {
     const payload: JwtPayloadDto = {
@@ -29,12 +41,10 @@ export class AuthService {
   }
 
   async verifyToken(token: string): Promise<UserLoggedDto> {
-    const payload = await this.jwtService.verifyAsync<JwtPayloadDto>(token, {
-      secret: this.configService.getOrThrow<string>('JWT_SECRET'),
-      algorithms: ['HS256'],
-      audience: 'kanban-be',
-      issuer: 'kanban-be',
-    });
+    const payload = await this.jwtService.verifyAsync<JwtPayloadDto>(
+      token,
+      this.jwtVerifyOptions,
+    );
 
     return {
       userId: payload.userId,

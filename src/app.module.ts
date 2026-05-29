@@ -12,30 +12,54 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
 import { AuthService } from './auth/auth.service';
+import config, { DatabaseConfig, JwtConfig } from './config/config';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [config],
     }),
     TasksModule,
     CoreModule,
     UsersModule,
+    AuthModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('DB_HOST'),
-        port: configService.get<number>('DB_PORT'),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_NAME'),
-        entities: [Task, User],
-        synchronize: configService.get<string>('IS_PRODUCTION') !== 'true', //only dev
-      }),
+      useFactory: (configService: ConfigService) => {
+        const databaseConfig =
+          configService.getOrThrow<DatabaseConfig>('database');
+        return {
+          type: 'postgres',
+          entities: [Task, User],
+          host: databaseConfig.host,
+          port: databaseConfig.port,
+          username: databaseConfig.user,
+          password: databaseConfig.password,
+          database: databaseConfig.name,
+          synchronize: databaseConfig.synchronize,
+        };
+      },
     }),
-    AuthModule,
+    JwtModule.registerAsync({
+      global: true,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const jwtConfig = configService.getOrThrow<JwtConfig>('jwt');
+        return {
+          secret: jwtConfig.secret,
+          signOptions: {
+            algorithm: jwtConfig.algorithm,
+            expiresIn: jwtConfig.expiresIn,
+            audience: jwtConfig.audience,
+            issuer: jwtConfig.issuer,
+          },
+        };
+      },
+    }),
   ],
   controllers: [AppController],
   providers: [
