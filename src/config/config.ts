@@ -9,6 +9,7 @@ export type DatabaseConfig = {
   password: string;
   name: string;
   synchronize: boolean;
+  ssl: boolean;
 };
 
 export type JwtConfig = {
@@ -46,6 +47,7 @@ export default (): Config => {
       password: process.env.DB_PASSWORD ?? 'postgres',
       name: process.env.DB_NAME ?? 'kanban',
       synchronize: !['production', 'release'].includes(nodeEnv),
+      ssl: ['production', 'release'].includes(nodeEnv),
     },
     jwt: {
       algorithm: (process.env.JWT_ALGORITHM ?? 'HS256') as Algorithm,

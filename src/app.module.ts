@@ -40,6 +40,7 @@ import { JwtModule } from '@nestjs/jwt';
           password: databaseConfig.password,
           database: databaseConfig.name,
           synchronize: databaseConfig.synchronize,
+          ssl: databaseConfig.ssl ? { rejectUnauthorized: false } : false,
         };
       },
     }),
