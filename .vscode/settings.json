@@ -4,7 +4,7 @@
       "baseUrl": "http://localhost:3000/v1"
     },
     "prod": {
-      "baseUrl": "https://similar-grata-fan4u-60e71dba.koyeb.app/v1"
+      "baseUrl": "http://localhost:3000/v1"
     }
   },
   "postman.settings.dotenv-detection-notification-visibility": false,
