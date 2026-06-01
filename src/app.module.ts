@@ -12,7 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
 import { AuthService } from './auth/auth.service';
-import config, { DatabaseConfig, JwtConfig } from './config/config';
+import config, { AppConfig, DatabaseConfig, JwtConfig } from './config/config';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
@@ -31,6 +31,7 @@ import { JwtModule } from '@nestjs/jwt';
       useFactory: (configService: ConfigService) => {
         const databaseConfig =
           configService.getOrThrow<DatabaseConfig>('database');
+        const { env: nodeEnv } = configService.getOrThrow<AppConfig>('app');
         return {
           type: 'postgres',
           entities: [Task, User],
@@ -41,6 +42,8 @@ import { JwtModule } from '@nestjs/jwt';
           database: databaseConfig.name,
           synchronize: databaseConfig.synchronize,
           ssl: databaseConfig.ssl ? { rejectUnauthorized: false } : false,
+          migrations: ['dist/migrations/*.js'],
+          migrationsRun: ['production', 'release'].includes(nodeEnv),
         };
       },
     }),
